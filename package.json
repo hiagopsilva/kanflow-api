@@ -3,12 +3,16 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "node ace serve --watch",
-    "build": "node ace build --production",
-    "start": "node server.js",
+    "dev": "export NODE_ENV=DEV && node ace serve --watch",
+    "build": "export NODE_ENV=PRD &&  node ace build --production",
+    "start": "export NODE_ENV=PRD && node server.js",
     "test": "node ace test",
     "lint": "eslint . --ext=.ts",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "migrate:dev": "export NODE_ENV=DEV && node ace migration:run",
+    "migrate:dev:rollback": "export NODE_ENV=DEV && node ace migration:rollback",
+    "migrate:prd": "export NODE_ENV=PRD && node ace migration:run",
+    "migrate:prd:rollback": "export NODE_ENV=PRD && node ace migration:rollback"
   },
   "eslintConfig": {
     "extends": [
@@ -41,6 +45,7 @@
     "@adonisjs/assembler": "^5.9.5",
     "@japa/preset-adonis": "^1.2.0",
     "@japa/runner": "^2.5.1",
+    "@types/pg": "^8.10.1",
     "@types/proxy-addr": "^2.0.0",
     "@types/source-map-support": "^0.5.6",
     "adonis-preset-ts": "^2.1.0",
@@ -56,7 +61,10 @@
   },
   "dependencies": {
     "@adonisjs/core": "^5.8.0",
+    "@adonisjs/lucid": "^18.4.0",
     "@adonisjs/repl": "^3.1.0",
+    "luxon": "^3.3.0",
+    "pg": "^8.11.0",
     "proxy-addr": "^2.0.7",
     "reflect-metadata": "^0.1.13",
     "source-map-support": "^0.5.21"
