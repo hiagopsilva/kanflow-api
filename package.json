@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "export NODE_ENV=DEV && node ace serve --watch",
+    "prd": "export NODE_ENV=PRD && node ace serve --watch",
     "build": "export NODE_ENV=PRD &&  node ace build --production",
     "start": "export NODE_ENV=PRD && node server.js",
     "test": "node ace test",
