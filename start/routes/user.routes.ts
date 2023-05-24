@@ -5,4 +5,5 @@ Route.group(() => {
   Route.get('/list-all', 'UsersController.listAll')
   Route.get('/list/:id', 'UsersController.list')
   Route.put('/update/:id', 'UsersController.update')
+  Route.delete('/delete/:id', 'UsersController.destroy')
 }).prefix('users')

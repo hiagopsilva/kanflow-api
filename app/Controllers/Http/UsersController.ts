@@ -3,6 +3,7 @@ import User from 'App/Models/User'
 import CreateUserValidator from 'App/Validators/CreateUserValidator'
 import ListUserValidator from 'App/Validators/ListUserValidator'
 import UpdateUserValidator from 'App/Validators/UpdateUserValidator'
+import { DateTime } from 'luxon'
 
 export default class UsersController {
   public async create({ request, response }: HttpContextContract) {
@@ -70,6 +71,31 @@ export default class UsersController {
         .save()
 
       return response.json(user)
+    } catch (error) {
+      console.log({ error })
+      return error
+    }
+  }
+
+  public async destroy({ request, response }: HttpContextContract) {
+    try {
+      const {
+        params: { id },
+      } = await request.validate(ListUserValidator)
+
+      const user = await User.query().select('*').where('id', id).whereNull('deleted_at').first()
+
+      if (!user) {
+        return response.status(404).json({ message: 'User not found' })
+      }
+
+      await user
+        .merge({
+          deletedAt: DateTime.now(),
+        })
+        .save()
+
+      return response.json({ message: 'User deleted' })
     } catch (error) {
       console.log({ error })
       return error
