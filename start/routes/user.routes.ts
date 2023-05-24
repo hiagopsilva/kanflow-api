@@ -4,4 +4,5 @@ Route.group(() => {
   Route.post('/create', 'UsersController.create')
   Route.get('/list-all', 'UsersController.listAll')
   Route.get('/list/:id', 'UsersController.list')
+  Route.put('/update/:id', 'UsersController.update')
 }).prefix('users')
