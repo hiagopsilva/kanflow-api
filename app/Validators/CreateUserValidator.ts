@@ -8,7 +8,7 @@ export default class CreateUserValidator {
     name: schema.string(),
     email: schema.string(),
     password: schema.string(),
-    avatar: schema.string(),
+    avatar: schema.string.optional(),
   })
 
   public messages: CustomMessages = {}
