@@ -15,4 +15,14 @@ export default class UsersController {
       return error
     }
   }
+  public async listAll({ response }: HttpContextContract) {
+    try {
+      const user = await User.query().select('*').whereNull('deleted_at')
+
+      return response.json(user)
+    } catch (error) {
+      console.log({ error })
+      return error
+    }
+  }
 }
