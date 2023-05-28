@@ -1,5 +1,6 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import User from 'App/Models/User'
+import AuthUserValidator from 'App/Validators/AuthUserValidator'
 import CreateUserValidator from 'App/Validators/CreateUserValidator'
 import ListUserValidator from 'App/Validators/ListUserValidator'
 import UpdateUserValidator from 'App/Validators/UpdateUserValidator'
@@ -18,6 +19,27 @@ export default class UsersController {
       return error
     }
   }
+
+  public async auth({ auth, request, response }: HttpContextContract) {
+    try {
+      const userAuthPayload = await request.validate(AuthUserValidator)
+
+      const user = await User.findByOrFail('email', userAuthPayload.email)
+
+      const token = await auth.use('api').attempt(userAuthPayload.email, userAuthPayload.password)
+
+      return response.json({
+        token,
+        id: user.id,
+        name: user.name,
+        email: user.email,
+      })
+    } catch (error) {
+      console.log({ error })
+      return error
+    }
+  }
+
   public async listAll({ response }: HttpContextContract) {
     try {
       const user = await User.query().select('*').whereNull('deleted_at')
