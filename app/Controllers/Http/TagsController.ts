@@ -6,64 +6,89 @@ import { DateTime } from 'luxon'
 
 export default class TagsController {
   public async create({ request, response }: HttpLoggedContextContract) {
-    const { name } = await request.validate(CreateTagValidator)
+    try {
+      const { name } = await request.validate(CreateTagValidator)
 
-    const tag = await Tag.create({ name })
+      const tag = await Tag.create({ name })
 
-    return response.json(tag)
+      return response.json(tag)
+    } catch (error) {
+      console.log({ error })
+      return error
+    }
   }
 
   public async listAll({ response }: HttpLoggedContextContract) {
-    const tags = await Tag.query().whereNull('deleted_at')
+    try {
+      const tags = await Tag.query().whereNull('deleted_at')
 
-    return response.json(tags)
+      return response.json(tags)
+    } catch (error) {
+      console.log({ error })
+      return error
+    }
   }
 
   public async list({ request, response }: HttpLoggedContextContract) {
-    const {
-      params: { id },
-    } = await request.validate(ListTagValidator)
+    try {
+      const {
+        params: { id },
+      } = await request.validate(ListTagValidator)
 
-    const tag = await Tag.query().where('id', id).whereNull('deleted_at').first()
+      const tag = await Tag.query().where('id', id).whereNull('deleted_at').first()
 
-    return response.json(tag)
+      return response.json(tag)
+    } catch (error) {
+      console.log({ error })
+      return error
+    }
   }
 
   public async update({ request, response }: HttpLoggedContextContract) {
-    const {
-      params: { id },
-    } = await request.validate(ListTagValidator)
+    try {
+      const {
+        params: { id },
+      } = await request.validate(ListTagValidator)
 
-    const { name } = await request.validate(CreateTagValidator)
+      const { name } = await request.validate(CreateTagValidator)
 
-    const tag = await Tag.query().where('id', id).whereNull('deleted_at').first()
+      const tag = await Tag.query().where('id', id).whereNull('deleted_at').first()
 
-    if (!tag) {
-      return response.status(404).json({ message: 'Tag not found' })
+      if (!tag) {
+        return response.status(404).json({ message: 'Tag not found' })
+      }
+
+      tag.name = name
+
+      await tag.save()
+
+      return response.json(tag)
+    } catch (error) {
+      console.log({ error })
+      return error
     }
-
-    tag.name = name
-
-    await tag.save()
-
-    return response.json(tag)
   }
 
   public async destroy({ request, response }: HttpLoggedContextContract) {
-    const {
-      params: { id },
-    } = await request.validate(ListTagValidator)
+    try {
+      const {
+        params: { id },
+      } = await request.validate(ListTagValidator)
 
-    const tag = await Tag.query().where('id', id).whereNull('deleted_at').first()
+      const tag = await Tag.query().where('id', id).whereNull('deleted_at').first()
 
-    if (!tag) {
-      return response.status(404).json({ message: 'Tag not found' })
+      if (!tag) {
+        return response.status(404).json({ message: 'Tag not found' })
+      }
+
+      tag.deletedAt = DateTime.now()
+
+      await tag.save()
+
+      return response.json(tag)
+    } catch (error) {
+      console.log({ error })
+      return error
     }
-
-    tag.deletedAt = DateTime.now()
-
-    await tag.save()
-
-    return response.json(tag)
   }
 }
