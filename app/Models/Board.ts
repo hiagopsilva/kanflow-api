@@ -6,10 +6,10 @@ export default class Board extends BaseModel {
   public id: number
 
   @column()
-  public name: number
+  public name: string
 
   @column()
-  public avatar: number
+  public avatar: string
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
