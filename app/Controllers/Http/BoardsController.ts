@@ -46,4 +46,34 @@ export default class BoardsController {
       return error
     }
   }
+
+  public async update({ user, request, response }: HttpLoggedContextContract) {
+    try {
+      const {
+        params: { id },
+      } = await request.validate(ListBoardValidator)
+
+      const { name, avatar } = await request.validate(SaveBoardValidator)
+
+      const board = await Board.query()
+        .where('id_user', user.id)
+        .where('id', id)
+        .whereNull('deleted_at')
+        .first()
+
+      if (!board) {
+        return response.status(404).json({ message: 'Board not found' })
+      }
+
+      board.name = name
+      board.avatar = avatar || ''
+
+      await board.save()
+
+      return response.json(board)
+    } catch (error) {
+      console.log({ error })
+      return error
+    }
+  }
 }
