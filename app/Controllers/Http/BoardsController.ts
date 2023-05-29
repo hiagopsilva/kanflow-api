@@ -2,6 +2,7 @@ import type { HttpLoggedContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Board from 'App/Models/Board'
 import ListBoardValidator from 'App/Validators/ListBoardValidator'
 import SaveBoardValidator from 'App/Validators/SaveBoardValidator'
+import { DateTime } from 'luxon'
 
 export default class BoardsController {
   public async create({ user, request, response }: HttpLoggedContextContract) {
@@ -67,6 +68,33 @@ export default class BoardsController {
 
       board.name = name
       board.avatar = avatar || ''
+
+      await board.save()
+
+      return response.json(board)
+    } catch (error) {
+      console.log({ error })
+      return error
+    }
+  }
+
+  public async destroy({ user, request, response }: HttpLoggedContextContract) {
+    try {
+      const {
+        params: { id },
+      } = await request.validate(ListBoardValidator)
+
+      const board = await Board.query()
+        .where('id_user', user.id)
+        .where('id', id)
+        .whereNull('deleted_at')
+        .first()
+
+      if (!board) {
+        return response.status(404).json({ message: 'Board not found' })
+      }
+
+      board.deletedAt = DateTime.now()
 
       await board.save()
 

@@ -1,7 +1,6 @@
 import { AuthenticationException } from '@adonisjs/auth/build/standalone'
 import type { GuardsList } from '@ioc:Adonis/Addons/Auth'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import HttpExceptionHandler from '@ioc:Adonis/Core/HttpExceptionHandler'
 
 export default class AuthMiddleware {
   protected redirectTo = '/login'
