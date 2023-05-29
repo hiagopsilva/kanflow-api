@@ -1,6 +1,7 @@
 import { AuthenticationException } from '@adonisjs/auth/build/standalone'
 import type { GuardsList } from '@ioc:Adonis/Addons/Auth'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import HttpExceptionHandler from '@ioc:Adonis/Core/HttpExceptionHandler'
 
 export default class AuthMiddleware {
   protected redirectTo = '/login'
@@ -26,12 +27,23 @@ export default class AuthMiddleware {
   }
 
   public async handle(
-    { auth }: HttpContextContract,
+    context: HttpContextContract & { user: any },
     next: () => Promise<void>,
     customGuards: (keyof GuardsList)[]
   ) {
-    const guards = customGuards.length ? customGuards : [auth.name]
-    await this.authenticate(auth, guards)
+    await context.auth.use('api').check()
+
+    if (!context.auth.use('api').isLoggedIn) {
+      console.log({ user: context.auth.use('api').user })
+      throw new Error('Unauthorized')
+    }
+
+    if (context.auth.use('api').isLoggedIn) {
+      context.user = context.auth.use('api').user ?? null
+    }
+
+    const guards = customGuards.length ? customGuards : [context.auth.name]
+    await this.authenticate(context.auth, guards)
     await next()
   }
 }
