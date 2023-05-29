@@ -8,6 +8,12 @@ export default class TagsController {
 
     const tag = await Tag.create({ name })
 
-    return response.created(tag)
+    return response.json(tag)
+  }
+
+  public async listAll({ response }: HttpLoggedContextContract) {
+    const tags = await Tag.all()
+
+    return response.json(tags)
   }
 }
