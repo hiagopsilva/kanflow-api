@@ -27,4 +27,20 @@ export default class TagsController {
 
     return response.json(tag)
   }
+
+  public async update({ request, response }: HttpLoggedContextContract) {
+    const {
+      params: { id },
+    } = await request.validate(ListTagValidator)
+
+    const { name } = await request.validate(CreateTagValidator)
+
+    const tag = await Tag.findByOrFail('id', id)
+
+    tag.name = name
+
+    await tag.save()
+
+    return response.json(tag)
+  }
 }
