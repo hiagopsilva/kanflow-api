@@ -29,7 +29,7 @@ export default class UsersController {
       const token = await auth.use('api').attempt(userAuthPayload.email, userAuthPayload.password)
 
       return response.json({
-        token,
+        token: token.token,
         id: user.id,
         name: user.name,
         email: user.email,
