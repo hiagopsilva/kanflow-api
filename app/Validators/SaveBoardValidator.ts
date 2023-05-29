@@ -6,7 +6,7 @@ export default class SaveBoardValidator {
 
   public schema = schema.create({
     name: schema.string(),
-    avatar: schema.string(),
+    avatar: schema.string.optional(),
   })
 
   public messages: CustomMessages = {}

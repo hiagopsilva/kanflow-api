@@ -6,4 +6,6 @@ Route.group(() => {
   Route.get('/list/:id', 'BoardsController.list')
   Route.put('/update/:id', 'BoardsController.update')
   Route.delete('/delete/:id', 'BoardsController.destroy')
-}).prefix('boards')
+})
+  .prefix('boards')
+  .middleware('auth')
