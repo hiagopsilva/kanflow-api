@@ -4,6 +4,7 @@ import Task from 'App/Models/Task'
 import CreateTaskValidator from 'App/Validators/CreateTaskValidator'
 import ListAllTaskValidator from 'App/Validators/ListAllTaskValidator'
 import ListTaskValidator from 'App/Validators/ListTaskValidator'
+import UpdateTaskValidator from 'App/Validators/UpdateTaskValidator'
 
 export default class TasksController {
   public async create({ request, response }: HttpLoggedContextContract) {
@@ -40,6 +41,24 @@ export default class TasksController {
       .where('id', id)
       .whereNull('deleted_at')
       .firstOrFail()
+
+    return response.status(200).json(task)
+  }
+
+  public async update({ request, response }: HttpLoggedContextContract) {
+    const {
+      params: { id },
+    } = await request.validate(ListTaskValidator)
+
+    const { title, description, status } = await request.validate(UpdateTaskValidator)
+
+    const task = await Task.query().where('id', id).whereNull('deleted_at').firstOrFail()
+
+    task.title = title
+    task.description = description
+    task.status = status
+
+    await task.save()
 
     return response.status(200).json(task)
   }
