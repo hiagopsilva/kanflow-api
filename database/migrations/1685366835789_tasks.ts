@@ -13,8 +13,11 @@ export default class extends BaseSchema {
 
       table.string('status').notNullable().comment('Status da tarefa')
 
+      table.integer('id_board').unsigned().references('id').inTable('boards').onDelete('CASCADE')
+
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })
+      table.timestamp('deleted_at', { useTz: true }).nullable()
     })
   }
 
