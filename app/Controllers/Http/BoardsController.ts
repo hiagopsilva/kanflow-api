@@ -1,5 +1,6 @@
 import type { HttpLoggedContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Board from 'App/Models/Board'
+import Task from 'App/Models/Task'
 import ListBoardValidator from 'App/Validators/ListBoardValidator'
 import SaveBoardValidator from 'App/Validators/SaveBoardValidator'
 import { DateTime } from 'luxon'
@@ -12,6 +13,25 @@ export default class BoardsController {
       const board = await Board.create({ name, avatar, id_user: user.id })
 
       return response.json(board)
+    } catch (error) {
+      console.log({ error })
+      return error
+    }
+  }
+
+  public async getDataForBoard({ user, response }: HttpLoggedContextContract) {
+    try {
+      const boards = await Board.query().where('id_user', user.id).whereNull('deleted_at')
+
+      const tasks = await Task.query().where('id_board', boards[0].id).whereNull('deleted_at')
+
+      return response.json({
+        current: {
+          board: boards[0],
+          tasks,
+        },
+        boards: boards.slice(1),
+      })
     } catch (error) {
       console.log({ error })
       return error
