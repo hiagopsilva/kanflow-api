@@ -5,6 +5,7 @@ import CreateTaskValidator from 'App/Validators/CreateTaskValidator'
 import ListAllTaskValidator from 'App/Validators/ListAllTaskValidator'
 import ListTaskValidator from 'App/Validators/ListTaskValidator'
 import UpdateTaskValidator from 'App/Validators/UpdateTaskValidator'
+import { DateTime } from 'luxon'
 
 export default class TasksController {
   public async create({ request, response }: HttpLoggedContextContract) {
@@ -61,5 +62,19 @@ export default class TasksController {
     await task.save()
 
     return response.status(200).json(task)
+  }
+
+  public async destroy({ request, response }: HttpLoggedContextContract) {
+    const {
+      params: { id },
+    } = await request.validate(ListTaskValidator)
+
+    const task = await Task.query().where('id', id).whereNull('deleted_at').firstOrFail()
+
+    task.deletedAt = DateTime.now()
+
+    await task.save()
+
+    return response.status(200).json({ message: 'Task deleted successfully' })
   }
 }
